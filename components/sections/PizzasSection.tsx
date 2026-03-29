@@ -1,8 +1,6 @@
 import Image from 'next/image'
 import Badge from '@/components/ui/Badge'
 import SectionTitle from '@/components/ui/SectionTitle'
-import AnimatedSection from '@/components/ui/AnimatedSection'
-import AnimatedPizzaGrid from '@/components/ui/AnimatedPizzaGrid'
 
 const PIZZAS = [
   {
@@ -42,6 +40,12 @@ const PIZZAS = [
   },
 ] as const
 
+function formatPizzaPrice(precio: number): string {
+  return precio % 1 === 0
+    ? `${precio} €`
+    : `${precio.toFixed(2).replace('.', ',')} €`
+}
+
 export default function PizzasSection() {
   return (
     <section id="pizzas" className="bg-brand-cream py-20 sm:py-28">
@@ -60,7 +64,7 @@ export default function PizzasSection() {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <AnimatedSection variant="fadeUp" className="mb-4 text-center">
+        <div className="mb-4 text-center">
           <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-brand-earth">
             Horno de leña
           </p>
@@ -68,13 +72,30 @@ export default function PizzasSection() {
           <p className="mx-auto mt-4 max-w-lg text-base text-gray-500">
             Masa artesana de lenta fermentación, ingredientes frescos y horneadas al momento.
           </p>
-        </AnimatedSection>
+        </div>
 
         <div className="mb-8 flex justify-center">
           <Badge variant="takeaway">También para llevar</Badge>
         </div>
 
-        <AnimatedPizzaGrid pizzas={PIZZAS} />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {PIZZAS.map((pizza) => (
+            <article
+              key={pizza.nombre}
+              className="card-hover group flex flex-col rounded-xl border border-brand-earth/15 bg-white p-5 shadow-sm"
+            >
+              <div className="mb-1 flex items-start justify-between gap-2">
+                <h3 className="font-serif text-lg font-semibold text-brand-dark transition-colors group-hover:text-brand-medium">
+                  {pizza.nombre}
+                </h3>
+                <span className="shrink-0 font-serif text-lg font-bold text-brand-earth">
+                  {formatPizzaPrice(pizza.precio)}
+                </span>
+              </div>
+              <p className="text-sm leading-relaxed text-gray-500">{pizza.descripcion}</p>
+            </article>
+          ))}
+        </div>
 
         <p className="mt-8 text-center text-sm text-gray-400">
           Precios para consumir en el local o para llevar. IVA incluido.

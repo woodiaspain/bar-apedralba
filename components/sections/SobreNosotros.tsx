@@ -1,14 +1,13 @@
 import Image from 'next/image'
 import SectionTitle from '@/components/ui/SectionTitle'
-import AnimatedSection from '@/components/ui/AnimatedSection'
 
 export default function SobreNosotros() {
   return (
     <section id="sobre-nosotros" className="bg-brand-cream py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center lg:gap-20">
-          {/* Texto — entra desde la izquierda */}
-          <AnimatedSection variant="fadeLeft">
+          {/* Texto */}
+          <div className="animate-fade-in-left">
             <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-brand-earth">
               Quiénes somos
             </p>
@@ -71,58 +70,56 @@ export default function SobreNosotros() {
                 @bar_apedralba
               </a>
             </div>
-          </AnimatedSection>
+          </div>
 
-          {/* Foto + Horarios — entran desde la derecha */}
-          <AnimatedSection variant="fadeRight" delay={0.1}>
-            <div className="flex flex-col gap-6">
-              {/* Foto */}
-              <div className="relative h-56 overflow-hidden rounded-2xl shadow-lg sm:h-64">
-                <Image
-                  src="/paella.png"
-                  alt="Paella del Bar A Pedralba"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
-              </div>
+          {/* Foto decorativa + Horarios */}
+          <div className="animate-fade-in-right delay-150 flex flex-col gap-6">
+            {/* Foto */}
+            <div className="relative h-56 overflow-hidden rounded-2xl shadow-lg sm:h-64">
+              <Image
+                src="/paella.png"
+                alt="Paella del Bar A Pedralba"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+            </div>
 
-              {/* Horarios */}
-              <div className="rounded-2xl bg-brand-dark p-8 text-brand-cream shadow-xl">
-                <p className="mb-6 text-sm font-semibold uppercase tracking-widest text-brand-earth">
-                  Horario de apertura
-                </p>
+            {/* Horarios */}
+            <div className="rounded-2xl bg-brand-dark p-8 text-brand-cream shadow-xl">
+              <p className="mb-6 text-sm font-semibold uppercase tracking-widest text-brand-earth">
+                Horario de apertura
+              </p>
 
-                <dl className="space-y-4">
-                  <div className="flex items-start justify-between gap-4 border-b border-brand-medium/30 pb-4">
-                    <dt className="text-brand-cream/70">
-                      <div className="font-medium text-brand-cream">Lunes – Viernes</div>
-                      <div className="text-sm text-brand-cream/50">Tardes y noches</div>
-                    </dt>
-                    <dd className="whitespace-nowrap font-serif text-xl font-semibold text-brand-cream">
-                      16:00 – 23:00
-                    </dd>
-                  </div>
-
-                  <div className="flex items-start justify-between gap-4">
-                    <dt className="text-brand-cream/70">
-                      <div className="font-medium text-brand-cream">Sábados y Domingos</div>
-                      <div className="text-sm text-brand-cream/50">Mediodía y noche</div>
-                    </dt>
-                    <dd className="whitespace-nowrap font-serif text-xl font-semibold text-brand-cream">
-                      10:00 – 24:00
-                    </dd>
-                  </div>
-                </dl>
-
-                <div className="mt-8 rounded-xl border border-brand-medium/30 bg-brand-medium/20 p-4">
-                  <p className="text-sm text-brand-cream/60">
-                    📍 Club de Tenis A Pedralba, Bergondo, A Coruña
-                  </p>
+              <dl className="space-y-4">
+                <div className="flex items-start justify-between gap-4 border-b border-brand-medium/30 pb-4">
+                  <dt className="text-brand-cream/70">
+                    <div className="font-medium text-brand-cream">Lunes – Viernes</div>
+                    <div className="text-sm text-brand-cream/50">Tardes y noches</div>
+                  </dt>
+                  <dd className="whitespace-nowrap font-serif text-xl font-semibold text-brand-cream">
+                    16:00 – 23:00
+                  </dd>
                 </div>
+
+                <div className="flex items-start justify-between gap-4">
+                  <dt className="text-brand-cream/70">
+                    <div className="font-medium text-brand-cream">Sábados y Domingos</div>
+                    <div className="text-sm text-brand-cream/50">Mediodía y noche</div>
+                  </dt>
+                  <dd className="whitespace-nowrap font-serif text-xl font-semibold text-brand-cream">
+                    10:00 – 24:00
+                  </dd>
+                </div>
+              </dl>
+
+              <div className="mt-8 rounded-xl border border-brand-medium/30 bg-brand-medium/20 p-4">
+                <p className="text-sm text-brand-cream/60">
+                  📍 Club de Tenis A Pedralba, Bergondo, A Coruña
+                </p>
               </div>
             </div>
-          </AnimatedSection>
+          </div>
         </div>
       </div>
     </section>

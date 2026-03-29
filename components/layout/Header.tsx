@@ -45,10 +45,9 @@ export default function Header() {
             <a
               key={href}
               href={href}
-              className="group relative text-sm text-brand-cream/80 transition-colors hover:text-brand-cream"
+              className="nav-underline text-sm text-brand-cream/80 transition-colors hover:text-brand-cream"
             >
               {label}
-              <span className="absolute -bottom-0.5 left-0 h-px w-full origin-center scale-x-0 bg-brand-cream/70 transition-transform duration-300 group-hover:scale-x-100" />
             </a>
           ))}
         </nav>

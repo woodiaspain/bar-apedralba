@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, Inter } from 'next/font/google'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
-import PageLoadOverlay from '@/components/ui/PageLoadOverlay'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -46,7 +45,6 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${playfair.variable} ${inter.variable}`}>
       <body>
-        <PageLoadOverlay />
         <Header />
         {children}
         <Footer />
