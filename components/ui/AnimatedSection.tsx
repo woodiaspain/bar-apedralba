@@ -1,6 +1,7 @@
 'use client'
 
 import { motion, useReducedMotion, type Variants } from 'framer-motion'
+import { useIsMobile } from '@/lib/hooks'
 
 type Variant = 'fadeUp' | 'fadeLeft' | 'fadeRight' | 'fadeIn'
 
@@ -37,13 +38,19 @@ export default function AnimatedSection({
   className,
 }: AnimatedSectionProps) {
   const prefersReduced = useReducedMotion()
+  const isMobile = useIsMobile()
+
+  // On mobile or reduced-motion: skip animation, render plain div
+  if (prefersReduced || isMobile) {
+    return <div className={className}>{children}</div>
+  }
 
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: '-100px' }}
-      variants={prefersReduced ? { hidden: {}, visible: {} } : variants[variant]}
+      viewport={{ once: true, margin: '0px' }}
+      variants={variants[variant]}
       transition={{ duration: 0.55, ease: 'easeOut', delay }}
       className={className}
     >

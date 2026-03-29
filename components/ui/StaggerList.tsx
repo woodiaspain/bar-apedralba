@@ -1,6 +1,7 @@
 'use client'
 
 import { motion, useReducedMotion, type Variants } from 'framer-motion'
+import { useIsMobile } from '@/lib/hooks'
 
 const containerVariants: Variants = {
   hidden: {},
@@ -24,19 +25,21 @@ interface StaggerListProps {
 
 export default function StaggerList({ items }: StaggerListProps) {
   const prefersReduced = useReducedMotion()
+  const isMobile = useIsMobile()
+  const shouldAnimate = !prefersReduced && !isMobile
 
   return (
     <motion.ul
       className="space-y-2"
-      variants={prefersReduced ? {} : containerVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: '-60px' }}
+      variants={shouldAnimate ? containerVariants : {}}
+      initial={shouldAnimate ? 'hidden' : false}
+      whileInView={shouldAnimate ? 'visible' : undefined}
+      viewport={{ once: true, margin: '0px' }}
     >
       {items.map((plato, i) => (
         <motion.li
           key={i}
-          variants={prefersReduced ? {} : itemVariants}
+          variants={shouldAnimate ? itemVariants : {}}
           className="flex items-start gap-2 text-gray-700"
         >
           <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-earth/50" />

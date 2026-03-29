@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion, type Variants } from 'framer-motion'
+import { useIsMobile } from '@/lib/hooks'
 
 const containerVariants: Variants = {
   hidden: {},
@@ -22,6 +23,8 @@ const itemVariants: Variants = {
 
 export default function HeroSection() {
   const prefersReduced = useReducedMotion()
+  const isMobile = useIsMobile()
+  const shouldAnimate = !prefersReduced && !isMobile
   const [showScroll, setShowScroll] = useState(true)
 
   const { scrollY } = useScroll()
@@ -32,11 +35,11 @@ export default function HeroSection() {
   }, [scrollY])
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-brand-dark">
+    <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-brand-dark">
       {/* Parallax background */}
       <motion.div
         className="absolute inset-[-10%]"
-        style={prefersReduced ? {} : { y: bgY }}
+        style={shouldAnimate ? { y: bgY } : {}}
       >
         <Image
           src="https://images.unsplash.com/photo-1502819126416-d387f86d47a1?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -57,26 +60,26 @@ export default function HeroSection() {
       {/* Contenido con stagger */}
       <motion.div
         className="relative z-10 mx-auto max-w-4xl px-6 text-center"
-        variants={prefersReduced ? {} : containerVariants}
-        initial="hidden"
+        variants={shouldAnimate ? containerVariants : {}}
+        initial={shouldAnimate ? 'hidden' : false}
         animate="visible"
       >
         <motion.p
-          variants={prefersReduced ? {} : itemVariants}
+          variants={shouldAnimate ? itemVariants : {}}
           className="mb-4 text-sm font-medium uppercase tracking-[0.25em] text-white"
         >
           Club de Tenis A Pedralba · Bergondo
         </motion.p>
 
         <motion.h1
-          variants={prefersReduced ? {} : itemVariants}
+          variants={shouldAnimate ? itemVariants : {}}
           className="mb-6 font-serif text-5xl font-bold text-brand-cream drop-shadow-sm sm:text-6xl lg:text-7xl"
         >
           Bar A Pedralba
         </motion.h1>
 
         <motion.p
-          variants={prefersReduced ? {} : itemVariants}
+          variants={shouldAnimate ? itemVariants : {}}
           className="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-brand-cream/70 sm:text-xl"
         >
           Pizzería artesana, paellas de fin de semana y menú del día.
@@ -85,12 +88,12 @@ export default function HeroSection() {
         </motion.p>
 
         <motion.div
-          variants={prefersReduced ? {} : itemVariants}
+          variants={shouldAnimate ? itemVariants : {}}
           className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
         >
           <motion.a
             href="#menu-del-dia"
-            whileHover={prefersReduced ? {} : { scale: 1.04 }}
+            whileHover={shouldAnimate ? { scale: 1.04 } : {}}
             whileTap={prefersReduced ? {} : { scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 340, damping: 20 }}
             className="rounded-full bg-brand-earth px-8 py-3.5 text-sm font-semibold text-white shadow-lg hover:bg-brand-earth/90 hover:shadow-xl"
@@ -99,7 +102,7 @@ export default function HeroSection() {
           </motion.a>
           <motion.a
             href="#pizzas"
-            whileHover={prefersReduced ? {} : { scale: 1.04 }}
+            whileHover={shouldAnimate ? { scale: 1.04 } : {}}
             whileTap={prefersReduced ? {} : { scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 340, damping: 20 }}
             className="rounded-full border border-brand-cream/30 px-8 py-3.5 text-sm font-semibold text-brand-cream/90 backdrop-blur-sm hover:border-brand-cream/60 hover:text-brand-cream"
@@ -110,7 +113,7 @@ export default function HeroSection() {
 
         {/* Horario rápido */}
         <motion.div
-          variants={prefersReduced ? {} : itemVariants}
+          variants={shouldAnimate ? itemVariants : {}}
           className="mt-16 flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-8"
         >
           <div className="flex items-center gap-2 text-sm text-brand-cream/50">
