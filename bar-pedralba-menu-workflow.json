@@ -1,0 +1,262 @@
+{
+  "name": "Bar A Pedralba — Actualización Menú WhatsApp",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-menu",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "1a2b3c4d-0001-0000-0000-000000000001",
+      "name": "WhatsApp Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "bar-pedralba-whatsapp-menu"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-owner-filter",
+              "leftValue": "={{ $json.data.key.remoteJid }}",
+              "rightValue": "={{ $vars.OWNER_WHATSAPP }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1a2b3c4d-0002-0000-0000-000000000002",
+      "name": "¿Es el dueño?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {},
+      "id": "1a2b3c4d-0003-0000-0000-000000000003",
+      "name": "Ignorar mensaje",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [680, 460]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"model\": \"gpt-4o-mini\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Eres un asistente del Bar A Pedralba en Bergondo, Galicia. Tu tarea es extraer informacion de menus y paellas de mensajes en espanol (con posibles variaciones gallegas).\\n\\nAnaliza el mensaje y devuelve UNICAMENTE un JSON valido sin texto adicional ni markdown.\\n\\nPara menu del dia:\\n{\\\"tipo\\\":\\\"menu_dia\\\",\\\"fecha\\\":\\\"YYYY-MM-DD\\\",\\\"primeros\\\":[\\\"plato 1\\\"],\\\"segundos\\\":[\\\"plato 1\\\"],\\\"postre\\\":null,\\\"precio\\\":12.50}\\n\\nPara paellas:\\n{\\\"tipo\\\":\\\"paella\\\",\\\"fecha\\\":\\\"YYYY-MM-DD\\\",\\\"tipo_paella\\\":\\\"Paella mixta\\\",\\\"precio\\\":14.00,\\\"plazas_disponibles\\\":null,\\\"hora_recogida\\\":null}\\n\\nReglas:\\n- Si no se menciona fecha, usa la fecha de hoy (Espana, zona horaria Europe/Madrid)\\n- plazas_disponibles y hora_recogida son opcionales (pon null si no se mencionan)\\n- postre es opcional (pon null si no se menciona)\\n- Normaliza los nombres de platos en minusculas\\n- Interpreta variaciones: 'de primero', 'para primero', 'primero tenemos', 'de segundo', etc.\\n- Interpreta variaciones gallegas: 'hai', 'temos', 'hoxe', 'primeiro', 'segundo', etc.\\n- El precio puede venir como '12\\u20ac', '12 euros', 'doce euros', '12,50\\u20ac', '11.50', etc.\\n- Devuelve SOLO el JSON, sin texto adicional, sin markdown, sin explicaciones\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"={{ $('WhatsApp Webhook').item.json.data.message.conversation }}\"\n    }\n  ],\n  \"response_format\": {\"type\": \"json_object\"}\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "1a2b3c4d-0004-0000-0000-000000000004",
+      "name": "Parsear con OpenAI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PENDIENTE-CONFIGURAR",
+          "name": "OpenAI — Authorization Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extraer el JSON del texto de respuesta de OpenAI\nconst aiResponse = $input.item.json;\n\nif (!aiResponse.choices || !aiResponse.choices[0]) {\n  throw new Error('Respuesta inesperada de OpenAI: ' + JSON.stringify(aiResponse));\n}\n\nconst content = aiResponse.choices[0].message.content;\n\nlet parsed;\ntry {\n  parsed = JSON.parse(content);\n} catch (e) {\n  throw new Error('La IA no devolvio JSON valido: ' + content.substring(0, 300));\n}\n\n// Validacion basica del tipo\nif (!parsed.tipo || !['menu_dia', 'paella'].includes(parsed.tipo)) {\n  throw new Error('Tipo de mensaje no reconocido: ' + JSON.stringify(parsed));\n}\n\nreturn { json: parsed };"
+      },
+      "id": "1a2b3c4d-0005-0000-0000-000000000005",
+      "name": "Extraer JSON de IA",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.WEB_URL }}/api/webhook/menu",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $vars.WEBHOOK_SECRET }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "1a2b3c4d-0006-0000-0000-000000000006",
+      "name": "Actualizar Web",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Construir el mensaje de confirmacion para el dueno\nconst webResponse = $input.item.json;\nconst menuData = $('Extraer JSON de IA').item.json;\nconst jid = $('WhatsApp Webhook').item.json.data.key.remoteJid;\n\nlet mensaje;\n\nif (!webResponse.ok) {\n  mensaje = '\\u274c No entendi el mensaje. Ejemplo: \\'Menu de hoy: primero ensalada, segundo merluza, postre flan, 12\\u20ac\\'';\n} else if (webResponse.tipo === 'menu_dia') {\n  mensaje = `\\u2705 Menu del ${webResponse.fecha} publicado correctamente`;\n} else if (webResponse.tipo === 'paella') {\n  const tipoPaella = menuData.tipo_paella || 'Paella';\n  mensaje = `\\u2705 ${tipoPaella} publicada para el ${webResponse.fecha}`;\n} else {\n  mensaje = '\\u2705 Actualizado correctamente en la web';\n}\n\nreturn { json: { jid, mensaje } };"
+      },
+      "id": "1a2b3c4d-0007-0000-0000-000000000007",
+      "name": "Preparar Confirmación",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.EVOLUTION_API_URL }}/message/sendText/{{ $vars.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $vars.EVOLUTION_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"number\": \"{{ $json.jid }}\",\n  \"text\": \"{{ $json.mensaje }}\"\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "1a2b3c4d-0008-0000-0000-000000000008",
+      "name": "Responder por WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 200]
+    }
+  ],
+  "connections": {
+    "WhatsApp Webhook": {
+      "main": [
+        [
+          {
+            "node": "¿Es el dueño?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es el dueño?": {
+      "main": [
+        [
+          {
+            "node": "Parsear con OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ignorar mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear con OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Extraer JSON de IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer JSON de IA": {
+      "main": [
+        [
+          {
+            "node": "Actualizar Web",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar Web": {
+      "main": [
+        [
+          {
+            "node": "Preparar Confirmación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Confirmación": {
+      "main": [
+        [
+          {
+            "node": "Responder por WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "versionId": "bar-pedralba-v1-0-0",
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": ""
+  },
+  "tags": [
+    {
+      "name": "bar-a-pedralba",
+      "createdAt": "2026-03-29T00:00:00.000Z"
+    }
+  ]
+}
