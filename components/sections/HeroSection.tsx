@@ -63,7 +63,7 @@ export default function HeroSection() {
       >
         <motion.p
           variants={prefersReduced ? {} : itemVariants}
-          className="mb-4 text-sm font-medium uppercase tracking-[0.25em] text-brand-earth"
+          className="mb-4 text-sm font-medium uppercase tracking-[0.25em] text-white"
         >
           Club de Tenis A Pedralba · Bergondo
         </motion.p>
