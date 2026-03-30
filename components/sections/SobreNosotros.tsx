@@ -115,7 +115,7 @@ export default function SobreNosotros() {
 
               <div className="mt-8 rounded-xl border border-brand-medium/30 bg-brand-medium/20 p-4">
                 <p className="text-sm text-brand-cream/60">
-                  📍 Club de Tenis A Pedralba, Bergondo, A Coruña
+                  📍 Covas, s/n, 15165 Pedralba, A Coruña
                 </p>
               </div>
             </div>

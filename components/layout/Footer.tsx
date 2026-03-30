@@ -55,7 +55,7 @@ export default function Footer() {
                   +34 981 794 488
                 </a>
               </li>
-              <li className="text-brand-cream/60">Bergondo, A Coruña, Galicia</li>
+              <li className="text-brand-cream/60">Covas, s/n, 15165 Pedralba, A Coruña</li>
             </ul>
           </div>
 
