@@ -1,8 +1,8 @@
 import SectionTitle from '@/components/ui/SectionTitle'
 
 export default function UbicacionSection() {
-  const mapsUrl = 'https://maps.google.com/maps?q=Covas+s%2Fn+15165+Pedralba+A+Coru%C3%B1a+Spain&z=16&output=embed'
-  const directionsUrl = 'https://www.google.com/maps/dir/?api=1&destination=Covas,s%2Fn,15165+Pedralba,A+Coru%C3%B1a,Spain'
+  const mapsUrl = 'https://maps.google.com/maps?q=43.307781,-8.227916&z=17&output=embed'
+  const directionsUrl = 'https://www.google.com/maps/dir/?api=1&destination=43.307781,-8.227916'
 
   return (
     <section id="ubicacion" className="bg-brand-cream py-20 sm:py-28">
